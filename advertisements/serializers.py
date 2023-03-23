@@ -43,9 +43,9 @@ class AdvertisementSerializer(serializers.ModelSerializer):
     def validate(self, data):
         """Метод для валидации. Вызывается при создании и обновлении."""
 
-        objects = list(Advertisement.objects.filter(creator=self.context["request"].user))
-        count = len([el.status for el in objects if el.status == 'OPEN'])
+        objects = list(Advertisement.objects.filter(creator=self.context["request"].user, status='OPEN'))
+        count = len(objects)
 
-        if count == 10 and dict(data)['status'] == 'OPEN':
+        if count == 10 and data.get('status') == 'OPEN' or self.context['request'].method == 'POST':
             raise ValidationError("Что-то пошло нетак")
         return data
